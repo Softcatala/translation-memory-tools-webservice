@@ -1,0 +1,12 @@
+--- Introduction
+
+Web interface to search in the memory
+
+--- Dependencies
+
+* Whoosh package
+
+--- Local web server
+
+lighttpd -D -f lighttpd.conf
+
