@@ -5,9 +5,6 @@ services:
 before_script:
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   - apk add --no-cache git
-  #- rm -f -r translation-memory-tools
-  #- git clone https://github.com/Softcatala/translation-memory-tools.git
-  #- cd translation-memory-tools
   - export SRC_HASH=$(git rev-parse HEAD)
 
 stages:
@@ -22,11 +19,11 @@ build:
     - echo $(date +%Y%m%d-%H%M%S) > $CI_PROJECT_DIR/datetag.txt
     - export DATETAG=$(cat $CI_PROJECT_DIR/datetag.txt)
     - echo "CI_REGISTRY_IMAGE:SRC_HASH->"  $CI_REGISTRY_IMAGE:$SRC_HASH
-    - echo "CI_REGISTRY_IMAGE:CI_COMMIT_REF_SLUG->"  $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - echo "CI_REGISTRY_IMAGE:CI_COMMIT_REF_NAME->"  $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
     - echo "CI_REGISTRY_IMAGE:$DATETAG->"  $CI_REGISTRY_IMAGE:$DATETAG
     - cp docker/dockerfile-webapp docker/dockerfile-webapp-local
-    - sed -i "s+tmt-data+registry.softcatala.org/github/translation-memory-tools/tmt-data$CI_COMMIT_REF_SLUG+g" docker/dockerfile-webapp-local
-    - docker build --tag tmt-webapp --tag $CI_REGISTRY_IMAGE:$SRC_HASH --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG --tag $CI_REGISTRY_IMAGE:$DATETAG . -f docker/dockerfile-webapp-local
+    - sed -i "s+tmt-data+registry.softcatala.org/github/translation-memory-tools/tmt-data:$CI_COMMIT_REF_NAME+g" docker/dockerfile-webapp-local
+    - docker build --tag tmt-webapp --tag $CI_REGISTRY_IMAGE:$SRC_HASH --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --tag $CI_REGISTRY_IMAGE:$DATETAG . -f docker/dockerfile-webapp-local
   artifacts:
     paths:
     - datetag.txt
@@ -34,7 +31,7 @@ test:
   stage: test
   script:
     - cp docker/dockerfile-webapp-test docker/dockerfile-webapp-test-local
-    - sed -i "s+tmt-data+registry.softcatala.org/github/translation-memory-tools/tmt-data$CI_COMMIT_REF_SLUG+g" docker/dockerfile-webapp-test-local
+    - sed -i "s+tmt-data+registry.softcatala.org/github/translation-memory-tools/tmt-data:$CI_COMMIT_REF_NAME+g" docker/dockerfile-webapp-test-local
     - docker build --tag tmt-webapp-test . -f docker/dockerfile-webapp-test-local
     - docker run -t tmt-webapp-test
 
@@ -44,4 +41,4 @@ publish:
     - export DATETAG=$(cat $CI_PROJECT_DIR/datetag.txt)
     - docker push $CI_REGISTRY_IMAGE:$DATETAG
     - docker push $CI_REGISTRY_IMAGE:$SRC_HASH
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
