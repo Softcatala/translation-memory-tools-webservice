@@ -1,0 +1,35 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        export DEBIAN_FRONTEND=noninteractive
+        sudo apt-get clean && sudo apt-get update
+        python --version
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements_indexer.txt
+        pip install nose2 black flake8
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    - name: Test
+      run: |
+        nose2
+    - name: black
+      run: |
+        black --check .
+    - name: flake8
+      run: |
+        flake8 . --ignore E501,W503,E203,E722,E402
