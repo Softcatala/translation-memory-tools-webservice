@@ -1,3 +1,10 @@
+include:
+  - project: 'docker/process-webhooks'
+    file: '/gitlab/deploy.yml'
+
+variables:
+  PROJECT_TO_BE_DEPLOYED: 'docker/translation-memory-tools'
+
 image: docker/compose:latest
 services:
   - docker:dind
@@ -11,7 +18,7 @@ stages:
   - build
   - test
   - publish
-
+  - deploy
 
 build:
   stage: build
@@ -42,3 +49,7 @@ publish:
     - docker push $CI_REGISTRY_IMAGE:$DATETAG
     - docker push $CI_REGISTRY_IMAGE:$SRC_HASH
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
+deploy:
+  stage: deploy
+
