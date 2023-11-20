@@ -9,11 +9,6 @@ image: docker/compose:latest
 services:
   - docker:dind
 
-before_script:
-  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-  - apk add --no-cache git
-  - export SRC_HASH=$(git rev-parse HEAD)
-
 stages:
   - build
   - test
@@ -22,6 +17,9 @@ stages:
 
 build:
   stage: build
+  before_script:
+    - export SRC_HASH=$(git rev-parse HEAD)
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - echo $(date +%Y%m%d-%H%M%S) > $CI_PROJECT_DIR/datetag.txt
     - export DATETAG=$(cat $CI_PROJECT_DIR/datetag.txt)
@@ -36,6 +34,8 @@ build:
     - datetag.txt
 test:
   stage: test
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - cp docker/dockerfile-webapp-test docker/dockerfile-webapp-test-local
     - sed -i "s+tmt-data+registry.softcatala.org/github/translation-memory-tools/tmt-data:$CI_COMMIT_REF_NAME+g" docker/dockerfile-webapp-test-local
@@ -44,6 +44,9 @@ test:
 
 publish:
   stage: publish
+  before_script:
+    - export SRC_HASH=$(git rev-parse HEAD)
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - export DATETAG=$(cat $CI_PROJECT_DIR/datetag.txt)
     - docker push $CI_REGISTRY_IMAGE:$DATETAG
