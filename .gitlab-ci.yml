@@ -18,6 +18,7 @@ stages:
 build:
   stage: build
   before_script:
+    - apk add --no-cache git  
     - export SRC_HASH=$(git rev-parse HEAD)
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
@@ -45,6 +46,7 @@ test:
 publish:
   stage: publish
   before_script:
+    - apk add --no-cache git
     - export SRC_HASH=$(git rev-parse HEAD)
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
