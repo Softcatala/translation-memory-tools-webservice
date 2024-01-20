@@ -20,7 +20,6 @@
 
 import sys
 
-sys.path.append("../terminology")
 from glossarysql import Entry, database
 import json
 
