@@ -19,17 +19,15 @@ build:
   stage: build
   before_script:
     - apk add --no-cache git  
-    - export SRC_HASH=$(git rev-parse HEAD)
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - echo $(date +%Y%m%d-%H%M%S) > $CI_PROJECT_DIR/datetag.txt
     - export DATETAG=$(cat $CI_PROJECT_DIR/datetag.txt)
-    - echo "CI_REGISTRY_IMAGE:SRC_HASH->"  $CI_REGISTRY_IMAGE:$SRC_HASH
     - echo "CI_REGISTRY_IMAGE:CI_COMMIT_REF_NAME->"  $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
     - echo "CI_REGISTRY_IMAGE:$DATETAG->"  $CI_REGISTRY_IMAGE:$DATETAG
     - cp docker/dockerfile-webapp docker/dockerfile-webapp-local
     - sed -i "s+tmt-data+registry.softcatala.org/github/translation-memory-tools/tmt-data:$CI_COMMIT_REF_NAME+g" docker/dockerfile-webapp-local
-    - docker build --tag tmt-webapp --tag $CI_REGISTRY_IMAGE:$SRC_HASH --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --tag $CI_REGISTRY_IMAGE:$DATETAG . -f docker/dockerfile-webapp-local
+    - docker build --tag tmt-webapp -tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --tag $CI_REGISTRY_IMAGE:$DATETAG . -f docker/dockerfile-webapp-local
   artifacts:
     paths:
     - datetag.txt
@@ -47,12 +45,10 @@ publish:
   stage: publish
   before_script:
     - apk add --no-cache git
-    - export SRC_HASH=$(git rev-parse HEAD)
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - export DATETAG=$(cat $CI_PROJECT_DIR/datetag.txt)
     - docker push $CI_REGISTRY_IMAGE:$DATETAG
-    - docker push $CI_REGISTRY_IMAGE:$SRC_HASH
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
 
 deploy:
