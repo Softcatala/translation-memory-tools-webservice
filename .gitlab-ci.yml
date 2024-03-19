@@ -27,7 +27,7 @@ build:
     - echo "CI_REGISTRY_IMAGE:$DATETAG->"  $CI_REGISTRY_IMAGE:$DATETAG
     - cp docker/dockerfile-webapp docker/dockerfile-webapp-local
     - sed -i "s+tmt-data+registry.softcatala.org/github/translation-memory-tools/tmt-data:$CI_COMMIT_REF_NAME+g" docker/dockerfile-webapp-local
-    - docker build --tag tmt-webapp -tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --tag $CI_REGISTRY_IMAGE:$DATETAG . -f docker/dockerfile-webapp-local
+    - docker build --tag tmt-webapp --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --tag $CI_REGISTRY_IMAGE:$DATETAG . -f docker/dockerfile-webapp-local
   artifacts:
     paths:
     - datetag.txt
