@@ -1,6 +1,6 @@
 FROM tmt-data as docker_web
 
-FROM python:3.11.1-slim-bullseye as generate_data
+FROM python:3.12.2-slim-bullseye as generate_data
 
 # Software
 COPY . /srv/web/
@@ -27,7 +27,7 @@ RUN rm index_data.json
 RUN python term_creator.py
 RUN rm glossary.json
 
-FROM python:3.11.1-slim-bullseye
+FROM python:3.12.2-slim-bullseye
 
 RUN apt-get update && apt-get install python3-dev gettext -y
 
