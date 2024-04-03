@@ -177,9 +177,9 @@ def memory_search_api():
 @app.route("/stats/", methods=["GET"])
 def stats_api():
     try:
-        requested = request.args.get('date')
-        date_requested = datetime.datetime.strptime(requested, '%Y-%m-%d')
-    except Exception as e:
+        requested = request.args.get("date")
+        date_requested = datetime.datetime.strptime(requested, "%Y-%m-%d")
+    except Exception:
         return Response({}, mimetype="application/json", status=400)
 
     stats = Stats()
