@@ -174,10 +174,14 @@ def memory_search_api():
     return Response(search.get_json(), mimetype="application/json")
 
 
-@app.route("/stats", methods=["GET"])
+@app.route("/stats/", methods=["GET"])
 def stats_api():
-    requested = request.args.get("date")
-    date_requested = datetime.datetime.strptime(requested, "%Y-%m-%d")
+    try:
+        requested = request.args.get('date')
+        date_requested = datetime.datetime.strptime(requested, '%Y-%m-%d')
+    except Exception as e:
+        return Response({}, mimetype="application/json", status=400)
+
     stats = Stats()
     return Response(stats.get_json(date_requested), mimetype="application/json")
 
