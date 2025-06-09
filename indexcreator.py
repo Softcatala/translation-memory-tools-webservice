@@ -32,7 +32,6 @@ class IndexCreator(object):
         self.writer = None
         self.words = 0
         self.projects = 0
-        self.options = []
         self.sentences_indexed = 0
         self.sentences = 0
         self.json_file = json_file
