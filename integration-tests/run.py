@@ -56,7 +56,7 @@ def read_parameters():
         help="set default environment to: " + opt_environments,
     )
 
-    (options, args) = parser.parse_args()
+    options, args = parser.parse_args()
 
     return environments.get(options.environment, None)
 

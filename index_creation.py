@@ -39,7 +39,7 @@ def read_parameters():
         help="Json with the data to process",
     )
 
-    (options, args) = parser.parse_args()
+    options, args = parser.parse_args()
     return options.filename
 
 
